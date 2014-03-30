@@ -11,7 +11,6 @@ import matplotlib.dates as md
 import time
 ##########################
 
-f = open('timedata.txt','w')
 cv.NamedWindow("camera", 1)
 capture = cv.CreateCameraCapture(0)
 
@@ -41,16 +40,6 @@ mqLoop = 0
 
 
 
-#openCV functions
-def Load():
-
-    return (faceCascade, smileCascade)
-
-def Display(image):
-    cv.NamedWindow("Smile Test")
-    cv.ShowImage("Smile Test", image)
-    cv.WaitKey(0)
-    cv.DestroyWindow("Smile Test")
 
 def DetectRedEyes(image, faceCascade, smileCascade):
     min_size = (20,20)
@@ -129,7 +118,7 @@ def DetectRedEyes(image, faceCascade, smileCascade):
                     
                     #print ((abs(smile[0][1] - smile[0][2]) / abs(pt1[0] - pt2[0])) * 100)
                     cv.ResetImageROI(image)
-                    if smile[1]+smile[0][3] > 0:
+                    if smile[1] + smile[0][3] > 45:
                         cv.Circle(image, ( (pt1[0] +pt2[0])/2 ,(pt1[1] + pt2[1])/2 ), w, (47,255,173), -1, lineType=8, shift=0)
                         #cv.SetImageROI(image,(pt1[0] +pt2[0])/2 ,(pt1[1] + pt2[1])/2 ) ,)
                         smilept1 = (int((pt1[0] + (pt1[0]+pt2[0])/2)/2),int((pt2[1] + (pt1[1] + pt2[1])/2 ))/2)
@@ -165,31 +154,6 @@ def DetectRedEyes(image, faceCascade, smileCascade):
                                pt2[0] - pt1[0],
                                int((pt2[1] - (pt1[1] + int(abs(pt1[1]-pt2[1]) / 1.6 ))))))
             cv.ResetImageROI(image)
-                    #if smile[1] > 90:
-                    #    mqttc.publish("smiles", "got smile", 1)
-                    #    time.sleep(5)
-                    
-        
-        #eyes = cv.HaarDetectObjects(image, eyeCascade,
-        #cv.CreateMemStorage(0),
-        #haar_scale, min_neighbors,
-        #haar_flags, (15,15))
-            
-
-        #if eyes:
-            # For each eye found
-            
-            #print eyes
-            
-            #for eye in eyes:
-                # Draw a rectangle around the eye
-            #   cv.Rectangle(image,
-            #   (eye[0][0],
-            #   eye[0][1]),
-            #   (eye[0][0] + eye[0][2],
-            #   eye[0][1] + eye[0][3]),
-            #   cv.RGB(255, 0, 0), 1, 8, 0)
-
     cv.ResetImageROI(image)
     return image
 
@@ -200,35 +164,13 @@ smileCascade = cv.Load("smileD/smiled_01.xml")
 
 
 while True:
-    """
-    if smileness > 70:
-        smilecount+= 1
-    else:
-        smilecount = 0
-        
-    if smilecount >=40:
-        smilecount = 0
-        #mqttc.publish("smiles", "smile", 0)
-        #mT.publish()
-        time.sleep(0)
-    
-    if mqLoop >= 1:
-        #mqttc.loop()
-        x = str(datetime.datetime.now())
-        f.write(str(md.datestr2num(x)) + " " + str(smileness) + "\n")
-        mqLoop = 0
-    else:
-        mqLoop+= 0.9
-    """
-    
     img = cv.QueryFrame(capture)
     
-    smileness = 0
     if img:
         image = DetectRedEyes(img, faceCascade, smileCascade)
         cv.ShowImage("camera", image)
     #print smileness
     
-    k = cv.WaitKey(10);
+    k = cv.WaitKey(5);
     if k == 27:
         break
