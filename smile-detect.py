@@ -174,3 +174,5 @@ while True:
     k = cv.WaitKey(5);
     if k == 27:
         break
+    
+cv.DestroyAllWindows()
